@@ -6,7 +6,7 @@ class UserRepository {
     async register(username, password) {
         const hashedPassword = await bcrypt.hash(password, 10);
         const [result] = await sequelize.query(
-            'INSERT INTO account (role_id,email, username,name, surname, hashed_password, updated, created, updated_by) VALUES (?, ?, ?,?,?,?, NOW(), NOW(),?)',
+            'INSERT INTO account (role_id,email, username,name, surname, hashed_password, updated, created, updated_by, active) VALUES (?, ?, ?,?,?,?, NOW(), NOW(),?, 0)',
             { replacements: [1, null, username, null, null, hashedPassword, 1] }
         );
 

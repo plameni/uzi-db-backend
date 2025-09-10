@@ -39,6 +39,7 @@ const warehouseRouter = require('./routing/warehouse-routing.js');
 const subjectTypeRouter = require('./routing/subject-type-routing.js');
 const subjectRouter = require('./routing/subject-routing.js');
 const entityRouter = require('./routing/entity-routing.js');
+const accRouter = require('./routing/acc-routing.js');
 
 const app = express();
 app.use(cors());
@@ -61,6 +62,7 @@ app.use('/api/warehouse', authMiddleware, warehouseRouter);
 app.use('/api/subject-type', authMiddleware, subjectTypeRouter);
 app.use('/api/subject', authMiddleware, subjectRouter);
 app.use('/api/entity', authMiddleware, entityRouter);
+app.use('/api/acc', authMiddleware, accRouter);
 
 sequelize.authenticate()
     .then(() => {

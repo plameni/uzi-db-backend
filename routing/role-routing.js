@@ -4,7 +4,7 @@ const roleController = require('./../controllers/role-controller');
 const roleRouter = express.Router(); 
 
 roleRouter.route('/')
-                     .get(roleController.getRolePaginated)
+                     .get(roleController.getAllRoles)
                      .post(roleController.insertRole);
 
 roleRouter.route('/:id')
