@@ -2,7 +2,23 @@ const sequelize = require('./../common/db-config');
 
 const getAllEntities = async () => {
   try {
-    const [results] = await sequelize.query('SELECT * FROM entity');
+    const [results] = await sequelize.query(`
+      SELECT 
+        id,
+        name,
+        surname,
+        JMBG as jmbg,
+        city_id as cityId,
+        street_id as streetId,
+        legal_entity_name as legalEntityName,
+        legal_entity_number as legalEntityNumber,
+        residence,
+        created,
+        updated,
+        updated_by as updatedBy,
+        subject_id as subjectId
+      FROM entity
+    `);
     return results;
   } catch (error) {
     console.error('Error in getAllEntities:', error);
@@ -13,7 +29,21 @@ const getAllEntities = async () => {
 const getEntityByID = async (id) => {
   try {
     const [results] = await sequelize.query(
-      'SELECT * FROM entity WHERE id = ?',
+      `SELECT 
+        id,
+        name,
+        surname,
+        JMBG as jmbg,
+        city_id as cityId,
+        street_id as streetId,
+        legal_entity_name as legalEntityName,
+        legal_entity_number as legalEntityNumber,
+        residence,
+        created,
+        updated,
+        updated_by as updatedBy,
+        subject_id as subjectId
+      FROM entity WHERE id = ?`,
       { replacements: [id] }
     );
     return results[0];
@@ -31,7 +61,21 @@ const getEntitiesPaginated = async (limit, offset) => {
     const totalCount = countResult[0].total;
 
     const [results] = await sequelize.query(
-      'SELECT * FROM entity ORDER BY created DESC LIMIT ? OFFSET ?',
+      `SELECT 
+        id,
+        name,
+        surname,
+        JMBG as jmbg,
+        city_id as cityId,
+        street_id as streetId,
+        legal_entity_name as legalEntityName,
+        legal_entity_number as legalEntityNumber,
+        residence,
+        created,
+        updated,
+        updated_by as updatedBy,
+        subject_id as subjectId
+      FROM entity ORDER BY created DESC LIMIT ? OFFSET ?`,
       { replacements: [limit, offset] }
     );
 
@@ -75,11 +119,24 @@ const insertEntity = async (entity) => {
   }
 };
 
-
 const getEntitiesBySubjectID = async (subjectId) => {
   try {
     const [results] = await sequelize.query(
-      'SELECT * FROM entity WHERE subject_id = ? ORDER BY created DESC',
+      `SELECT 
+        id,
+        name,
+        surname,
+        JMBG as jmbg,
+        city_id as cityId,
+        street_id as streetId,
+        legal_entity_name as legalEntityName,
+        legal_entity_number as legalEntityNumber,
+        residence,
+        created,
+        updated,
+        updated_by as updatedBy,
+        subject_id as subjectId
+      FROM entity WHERE subject_id = ? ORDER BY created DESC`,
       { replacements: [subjectId] }
     );
     return results;
@@ -88,7 +145,6 @@ const getEntitiesBySubjectID = async (subjectId) => {
     return null;
   }
 };
-
 
 const updateEntity = async (id, entity) => {
   try {
