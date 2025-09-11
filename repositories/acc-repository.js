@@ -1,4 +1,5 @@
 const sequelize = require('./../common/db-config');
+const bcrypt = require('bcrypt');
 
 const getAllAccounts = async () => {
   try {
@@ -82,6 +83,7 @@ const getAccountsPaginated = async (limit, offset) => {
 
 const insertAccount = async (account) => {
   try {
+    const hashed = await bcrypt.hash(account.hashedPassword, 10);
     const [results] = await sequelize.query(
       `INSERT INTO account (
         role_id, email, username, name, surname, hashed_password,
@@ -94,7 +96,7 @@ const insertAccount = async (account) => {
           account.username,
           account.name,
           account.surname,
-          account.hashedPassword,
+          hashed,
           account.updatedBy,
           account.active
         ]

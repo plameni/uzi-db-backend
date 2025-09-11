@@ -27,35 +27,40 @@ class UserRepository {
     }
 
     async login(username, password) {
-        const [users] = await sequelize.query(
-            'SELECT * FROM account WHERE username = ?',
-            { replacements: [username] }
-        );
+    const [users] = await sequelize.query(
+        'SELECT * FROM account WHERE username = ?',
+        { replacements: [username] }
+    );
 
-        if (users.length === 0) {
-            throw new Error('Korisnik nije pronađen');
-        }
-
-        const user = users[0];
-        const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
-
-        if (!isPasswordValid) {
-            throw new Error('Pogrešna lozinka');
-        }
-
-        // Generisanje JWT tokena
-        const token = jwt.sign(
-            { userId: user.id, username: user.username },
-            process.env.JWT_SECRET || 'your_jwt_secret',
-            { expiresIn: '1h' }
-        );
-
-        return {
-            userId: user.id,
-            username: user.username,
-            token
-        };
+    if (users.length === 0) {
+        throw new Error('Korisnik nije pronađen');
     }
+
+    const user = users[0];
+
+    // ✅ Provjera da li je aktivan
+    if (user.active !== 0) {
+        throw new Error('Vaš profil je deaktiviran');
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.hashed_password);
+    if (!isPasswordValid) {
+        throw new Error('Pogrešna lozinka');
+    }
+
+    // Generisanje JWT tokena
+    const token = jwt.sign(
+        { userId: user.id, username: user.username },
+        process.env.JWT_SECRET || 'your_jwt_secret',
+        { expiresIn: '1h' }
+    );
+
+    return {
+        userId: user.id,
+        username: user.username,
+        token
+    };
+}
 
     async getUserById(id) {
         const [users] = await sequelize.query(
