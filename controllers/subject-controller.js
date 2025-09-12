@@ -88,11 +88,51 @@ const deleteSubject = async (req, res) => {
   }
 };
 
+const searchSubjects = async (req, res) => {
+  try {
+    const {
+      subjectTypeId,
+      criminalActId,
+      movable,
+      propertyTypeId,
+      cityId,
+      dateFrom,
+      dateTo,
+      caseNumber
+    } = req.query;
+    
+    // Priprema filter objekta
+    const filters = {};
+    
+    if (subjectTypeId) filters.subjectTypeId = subjectTypeId;
+    if (criminalActId) filters.criminalActId = criminalActId;
+    if (movable) filters.movable = movable;
+    if (propertyTypeId) filters.propertyTypeId = propertyTypeId;
+    if (cityId) filters.cityId = cityId;
+    if (dateFrom) filters.dateFrom = dateFrom;
+    if (dateTo) filters.dateTo = dateTo;
+    if (caseNumber) filters.caseNumber = caseNumber;
+    
+    const results = await subjectRepository.searchSubjects(filters);
+    
+    if (results !== null) {
+      res.send(results);
+    } else {
+      res.status(500).send({ error: 'Search failed' });
+    }
+  } catch (error) {
+    console.error('Error in searchSubjects controller:', error);
+    res.status(500).send({ error: 'Internal server error' });
+  }
+};
+
+
 module.exports = {
   getAllSubjects,
   getSubjectByID,
   getSubjectsPaginated,
   insertSubject,
   updateSubject,
-  deleteSubject
+  deleteSubject,
+  searchSubjects
 };

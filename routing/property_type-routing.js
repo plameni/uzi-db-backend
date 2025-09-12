@@ -7,6 +7,10 @@ propertyTypeRouter.route('/')
                      .get(propertyTypeController.getPropertyTypesPaginated)
                      .post(propertyTypeController.insertPropertyType);
 
+propertyTypeRouter.route('/notpag')
+                     .get(propertyTypeController.getAllPropertyTypes)
+                   
+
 propertyTypeRouter.route('/:id')
     .get(propertyTypeController.getPropertyTypeByID)
     .put(propertyTypeController.updatePropertyType)

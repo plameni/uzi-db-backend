@@ -8,6 +8,8 @@ subjectRouter.route('/')
   .get(subjectController.getSubjectsPaginated)
   .post(upload.single('pdfFile'), subjectController.insertSubject);
 
+subjectRouter.get('/search', subjectController.searchSubjects);
+
 subjectRouter.route('/:id')
   .get(subjectController.getSubjectByID)
   .put(subjectController.updateSubject)

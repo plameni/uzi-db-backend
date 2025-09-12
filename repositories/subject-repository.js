@@ -123,11 +123,88 @@ const deleteSubject = async (id) => {
   }
 };
 
+
+const searchSubjects = async (filters) => {
+  try {
+    let query = `
+      SELECT s.*, 
+        st.name as subject_type_name,
+        ca.name as criminal_act_name,
+        c.name as city_name,
+        ct.name as court_name
+      FROM subject s
+      LEFT JOIN subject_type st ON s.subject_type_id = st.id
+      LEFT JOIN criminal_acts ca ON s.criminal_act_id = ca.id
+      LEFT JOIN city c ON s.city_id = c.id
+      LEFT JOIN courts ct ON s.court_id = ct.id
+      WHERE 1=1
+    `;
+    
+    const replacements = [];
+    
+    // Dinamičko dodavanje filtera
+    if (filters.subjectTypeId) {
+      query += ' AND s.subject_type_id = ?';
+      replacements.push(filters.subjectTypeId);
+    }
+    
+    if (filters.criminalActId) {
+      query += ' AND s.criminal_act_id = ?';
+      replacements.push(filters.criminalActId);
+    }
+    
+    if (filters.cityId) {
+      query += ' AND s.city_id = ?';
+      replacements.push(filters.cityId);
+    }
+    
+    if (filters.caseNumber) {
+      query += ' AND s.decision_number LIKE ?';
+      replacements.push(`%${filters.caseNumber}%`);
+    }
+    
+    if (filters.dateFrom) {
+      query += ' AND s.date_of_decision >= ?';
+      replacements.push(filters.dateFrom);
+    }
+    
+    if (filters.dateTo) {
+      query += ' AND s.date_of_decision <= ?';
+      replacements.push(filters.dateTo);
+    }
+    
+    // Dodatni filteri ako postoje u bazi
+    if (filters.movable) {
+      // Ovo je primer - prilagodite prema vašoj strukturi baze
+      query += ' AND s.movable = ?';
+      replacements.push(filters.movable);
+    }
+    
+    if (filters.propertyTypeId) {
+      // Ovo je primer - prilagodite prema vašoj strukturi baze
+      query += ' AND s.property_type_id = ?';
+      replacements.push(filters.propertyTypeId);
+    }
+    
+    query += ' ORDER BY s.id DESC';
+    
+    const [results] = await sequelize.query(query, { replacements });
+    return results;
+  } catch (error) {
+    console.error('Error in searchSubjects:', error);
+    return null;
+  }
+};
+
+
+
+
 module.exports = {
   getAllSubjects,
   getSubjectByID,
   getSubjectsPaginated,
   insertSubject,
+  searchSubjects, 
   updateSubject,
   deleteSubject
 };
