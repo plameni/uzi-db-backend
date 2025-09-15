@@ -40,6 +40,8 @@ const subjectTypeRouter = require('./routing/subject-type-routing.js');
 const subjectRouter = require('./routing/subject-routing.js');
 const entityRouter = require('./routing/entity-routing.js');
 const accRouter = require('./routing/acc-routing.js');
+const movableRouter = require('./routing/movable-routing.js');
+const immovableRouter = require('./routing/immovable-routing.js');
 
 const app = express();
 app.use(cors());
@@ -63,6 +65,9 @@ app.use('/api/subject-type', authMiddleware, subjectTypeRouter);
 app.use('/api/subject', authMiddleware, subjectRouter);
 app.use('/api/entity', authMiddleware, entityRouter);
 app.use('/api/acc', authMiddleware, accRouter);
+app.use('/api/movable', authMiddleware, movableRouter);
+app.use('/api/immovable', authMiddleware, immovableRouter);
+
 
 sequelize.authenticate()
     .then(() => {
