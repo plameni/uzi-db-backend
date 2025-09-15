@@ -137,57 +137,58 @@ const searchSubjects = async (filters) => {
       LEFT JOIN criminal_acts ca ON s.criminal_act_id = ca.id
       LEFT JOIN city c ON s.city_id = c.id
       LEFT JOIN courts ct ON s.court_id = ct.id
-      WHERE 1=1
     `;
-    
+
+    const conditions = [];
     const replacements = [];
-    
-    // Dinamičko dodavanje filtera
+
     if (filters.subjectTypeId) {
-      query += ' AND s.subject_type_id = ?';
+      conditions.push('s.subject_type_id = ?');
       replacements.push(filters.subjectTypeId);
     }
-    
+
     if (filters.criminalActId) {
-      query += ' AND s.criminal_act_id = ?';
+      conditions.push('s.criminal_act_id = ?');
       replacements.push(filters.criminalActId);
     }
-    
+
     if (filters.cityId) {
-      query += ' AND s.city_id = ?';
+      conditions.push('s.city_id = ?');
       replacements.push(filters.cityId);
     }
-    
+
     if (filters.caseNumber) {
-      query += ' AND s.decision_number LIKE ?';
+      conditions.push('s.decision_number LIKE ?');
       replacements.push(`%${filters.caseNumber}%`);
     }
-    
+
     if (filters.dateFrom) {
-      query += ' AND s.date_of_decision >= ?';
+      conditions.push('s.date_of_decision >= ?');
       replacements.push(filters.dateFrom);
     }
-    
+
     if (filters.dateTo) {
-      query += ' AND s.date_of_decision <= ?';
+      conditions.push('s.date_of_decision <= ?');
       replacements.push(filters.dateTo);
     }
-    
-    // Dodatni filteri ako postoje u bazi
+
     if (filters.movable) {
-      // Ovo je primer - prilagodite prema vašoj strukturi baze
-      query += ' AND s.movable = ?';
+      conditions.push('s.movable = ?');
       replacements.push(filters.movable);
     }
-    
+
     if (filters.propertyTypeId) {
-      // Ovo je primer - prilagodite prema vašoj strukturi baze
-      query += ' AND s.property_type_id = ?';
+      conditions.push('s.property_type_id = ?');
       replacements.push(filters.propertyTypeId);
     }
-    
+
+    // Ako postoje filteri, dodaj WHERE
+    if (conditions.length > 0) {
+      query += ' WHERE ' + conditions.join(' AND ');
+    }
+
     query += ' ORDER BY s.id DESC';
-    
+
     const [results] = await sequelize.query(query, { replacements });
     return results;
   } catch (error) {
@@ -195,7 +196,6 @@ const searchSubjects = async (filters) => {
     return null;
   }
 };
-
 
 
 
